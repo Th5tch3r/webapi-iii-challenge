@@ -97,15 +97,36 @@ router.put('/:id', [validateUser, validateUserId], (req, res) => {
 //custom middleware
 
 function validateUserId(req, res, next) {
+    const {id} = req.params;
 
+    Users.getById(id)
+        .then(user => {
+            if (user) {
+                next();
+            } else {
+                res.status(404).json({message: "No user with this id"})
+            }
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({message: "Error processing request."})
+        });
 };
 
 function validateUser(req, res, next) {
-
+    if (req.body && Object.keys(req.body).length > 0) {
+        next();
+    } else {
+        next({message: "Bad Request"})
+    }
 };
 
 function validatePost(req, res, next) {
-
+    if (req.body && Object.keys(req.body).length > 0) {
+        next();
+    } else {
+        next({message: "Bad Request"})
+    }
 };
 
 module.exports = router;
